@@ -468,26 +468,30 @@
      * @params {Object} [event]
      */
     base.trackPointer = function (event) {
-      if (AppConfig.ready && AppConfig.dragging) {
-        AppConfig.pointerEndPosX = base.getPointerEvent(event).pageX;
-        if (AppConfig.monitorStartTime < new Date().getTime() - AppConfig.monitorInt) {
-          AppConfig.pointerDistance = AppConfig.pointerEndPosX - AppConfig.pointerStartPosX;
-          if(AppConfig.pointerDistance > 0){
-          AppConfig.endFrame = AppConfig.currentFrame + Math.ceil((AppConfig.totalFrames - 1) * AppConfig.speedMultiplier * (AppConfig.pointerDistance / base.$el.width()));
-          }else{
-          AppConfig.endFrame = AppConfig.currentFrame + Math.floor((AppConfig.totalFrames - 1) * AppConfig.speedMultiplier * (AppConfig.pointerDistance / base.$el.width()));
-          }
+		if (AppConfig.ready && AppConfig.dragging) {
+			AppConfig.pointerEndPosX = base.getPointerEvent(event).pageX;
+			if (AppConfig.monitorStartTime < new Date().getTime() - AppConfig.monitorInt) {
+				if (AppConfig.reverse){
+					AppConfig.pointerDistance = AppConfig.pointerStartPosX - AppConfig.pointerEndPosX;
+				} else {
+					AppConfig.pointerDistance = AppConfig.pointerEndPosX - AppConfig.pointerStartPosX;
+				}
+				if (AppConfig.pointerDistance > 0) {
+					AppConfig.endFrame = AppConfig.currentFrame + Math.ceil((AppConfig.totalFrames - 1) * AppConfig.speedMultiplier * (AppConfig.pointerDistance / base.$el.width()));
+				} else {
+					AppConfig.endFrame = AppConfig.currentFrame + Math.floor((AppConfig.totalFrames - 1) * AppConfig.speedMultiplier * (AppConfig.pointerDistance / base.$el.width()));
+				}
 
-          if( AppConfig.disableWrap ) {
-            AppConfig.endFrame = Math.min(AppConfig.totalFrames - (AppConfig.zeroBased ? 1 : 0), AppConfig.endFrame);
-            AppConfig.endFrame = Math.max((AppConfig.zeroBased ? 0 : 1), AppConfig.endFrame);
-          }
-          base.refresh();
-          AppConfig.monitorStartTime = new Date().getTime();
-          AppConfig.pointerStartPosX = base.getPointerEvent(event).pageX;
-        }
-      }
-    };
+				if (AppConfig.disableWrap) {
+					AppConfig.endFrame = Math.min(AppConfig.totalFrames - (AppConfig.zeroBased ? 1 : 0), AppConfig.endFrame);
+					AppConfig.endFrame = Math.max((AppConfig.zeroBased ? 0 : 1), AppConfig.endFrame);
+				}
+				base.refresh();
+				AppConfig.monitorStartTime = new Date().getTime();
+				AppConfig.pointerStartPosX = base.getPointerEvent(event).pageX;
+			}
+		}
+	};
 
     /**
      * @method refresh
@@ -850,7 +854,12 @@
       * @cfg {Number} playSpeed
       * Value to control the speed of play button rotation
       */
-      playSpeed: 100
+      playSpeed: 100 ,
+      /**
+      * @cfg {Boolean} reverse
+      * Set to true to reverse the default mouse drag rotation
+      */
+      reverse: false
     };
     base.init();
   };
